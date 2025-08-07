@@ -142,9 +142,9 @@ try:
         st.warning("No location data available after filtering.")
 
     st.subheader("Accident Classification")
-    impact_count = filtered_df['classification_of_accident (*P.D. omly means "Property Damage only")'].value_counts().reset_index()
+    impact_count = filtered_df['classification_of_accident'].value_counts().reset_index()
     impact_count.columns = ['Classification', 'Count']
-    fig_pie = px.pie(impact_count, names='Classification', values='Count', title='Accident Classification Breakdown')
+    fig_pie = px.pie(impact_count, names='Classification', values='Count', title='Accident Classification Breakdown (*P.D. omly means "Property Damage only")')
     st.plotly_chart(fig_pie, use_container_width=True)
 except Exception as e:
     logging.error(f"Visualization error: {e}")
@@ -197,4 +197,5 @@ try:
 except Exception as e:
     logging.error(f"Error rendering final tables: {e}")
     st.error("Unable to show final tables or downloads.")
+
 
