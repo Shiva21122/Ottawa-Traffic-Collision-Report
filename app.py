@@ -45,7 +45,7 @@ if df.empty:
 
 st.title("Ottawa Traffic Collision Dashboard")
 
-#Shared Filters
+# Shared Filters
 try:
     st.sidebar.header("Filter Data (Global)")
     years = sorted(df['accident_date'].dt.year.dropna().unique())
@@ -53,12 +53,16 @@ try:
     locations = sorted(df['location_type'].dropna().unique())
     lights = sorted(df['light'].dropna().unique())
     impacts = sorted(df['initial_impact_type'].dropna().unique())
+    environments = sorted(df['environment_condition'].dropna().unique())
+    surfaces = sorted(df['road_surface_condition'].dropna().unique())
 
     selected_years = st.sidebar.multiselect("Year", years)
     selected_days = st.sidebar.multiselect("Day of Week", days)
     selected_locations = st.sidebar.multiselect("Location Type", locations)
     selected_lights = st.sidebar.multiselect("Light Condition", lights)
     selected_impacts = st.sidebar.multiselect("Impact Type", impacts)
+    selected_environments = st.sidebar.multiselect("Environment Condition", environments)
+    selected_surfaces = st.sidebar.multiselect("Road Surface Condition", surfaces)
 
     filtered_df = df.copy()
     if selected_years:
@@ -71,6 +75,10 @@ try:
         filtered_df = filtered_df[filtered_df['light'].isin(selected_lights)]
     if selected_impacts:
         filtered_df = filtered_df[filtered_df['initial_impact_type'].isin(selected_impacts)]
+    if selected_environments:
+        filtered_df = filtered_df[filtered_df['environment_condition'].isin(selected_environments)]
+    if selected_surfaces:
+        filtered_df = filtered_df[filtered_df['road_surface_condition'].isin(selected_surfaces)]
 except Exception as e:
     logging.error(f"Error in filter processing: {e}")
     st.error("An error occurred while filtering data.")
@@ -90,7 +98,7 @@ try:
 except Exception as e:
     logging.warning(f"KPI rendering issue: {e}")
 
-#Visualizations
+# Visualizations
 try:
     st.subheader("Monthly Collision Trend")
     monthly = filtered_df.groupby(filtered_df['accident_date'].dt.to_period("M")).size().reset_index(name="Collisions")
@@ -111,6 +119,8 @@ try:
     map_year = st.multiselect("Map - Year", years)
     map_location = st.multiselect("Map - Location Type", locations)
     map_light = st.multiselect("Map - Light Condition", lights)
+    map_environment = st.multiselect("Map - Environment Condition", environments)
+    map_surface = st.multiselect("Map - Road Surface Condition", surfaces)
 
     map_df = df.copy()
     if map_year:
@@ -119,6 +129,10 @@ try:
         map_df = map_df[map_df['location_type'].isin(map_location)]
     if map_light:
         map_df = map_df[map_df['light'].isin(map_light)]
+    if map_environment:
+        map_df = map_df[map_df['environment_condition'].isin(map_environment)]
+    if map_surface:
+        map_df = map_df[map_df['road_surface_condition'].isin(map_surface)]
 
     map_df = map_df.dropna(subset=["lat", "long"]).copy()
     map_df.rename(columns={"long": "longitude"}, inplace=True)
@@ -136,7 +150,7 @@ except Exception as e:
     logging.error(f"Visualization error: {e}")
     st.error("Failed to render some visualizations.")
 
-#Insight Summary
+# Insight Summary
 try:
     st.subheader("Key Conditions Summary")
     col1, col2, col3 = st.columns(3)
@@ -152,7 +166,7 @@ try:
 except Exception as e:
     logging.warning(f"Insight summary error: {e}")
 
-#Comparative Analysis
+# Comparative Analysis
 try:
     st.subheader("Comparative Metrics")
     all_avg_injury_rate = df['num_of_injuries'].sum() / len(df)
@@ -169,7 +183,7 @@ try:
 except Exception as e:
     logging.warning(f"Comparative metric issue: {e}")
 
-#Raw Data Table
+# Raw Data Table
 try:
     st.subheader("Filtered Collision Data")
     st.dataframe(filtered_df.reset_index(drop=True))
