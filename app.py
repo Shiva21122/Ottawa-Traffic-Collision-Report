@@ -10,7 +10,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-st.set_page_config(page_title="Ottawa Traffic Collision Report 2017-2022", layout="wide")
+st.set_page_config(page_title="Ottawa Traffic Collision Analysis 2017-2022", layout="wide")
 
 # Load data
 @st.cache_data
@@ -43,7 +43,7 @@ df, dim_data = load_data()
 if df.empty:
     st.stop()
 
-st.title("Ottawa Traffic Collision Report 2017-2022")
+st.title("Ottawa Traffic Collision Analysis 2017-2022")
 
 # Shared Filters
 try:
@@ -197,6 +197,7 @@ try:
 except Exception as e:
     logging.error(f"Error rendering final tables: {e}")
     st.error("Unable to show final tables or downloads.")
+
 
 
 
